@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import {
   Firestore,
@@ -10,67 +11,74 @@ import {
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './admin.html',
   styleUrl: './admin.scss'
 })
-
 export class AdminComponent implements OnInit {
 
   leads: any[] = [];
+  filteredLeads: any[] = [];
   groupedLeads: any[] = [];
-  todayLeads = 0;
 
-  constructor(private firestore: Firestore){}
+  todayLeads = 0;
+  searchText = '';
+
+  constructor(private firestore: Firestore) {}
 
   ngOnInit(): void {
+    const leadsCollection = collection(this.firestore, 'student_leads');
 
-    const leadsCollection = collection(
-      this.firestore,
-      'student_leads'
-    );
+    collectionData(leadsCollection, { idField: 'id' }).subscribe((data: any) => {
+      console.log('Firebase Leads:', data);
 
-    collectionData(leadsCollection, {
-      idField: 'id'
-    }).subscribe((data: any) => {
+      this.leads = data.sort((a: any, b: any) => {
+        const timeA = a.createdAt?.seconds || 0;
+        const timeB = b.createdAt?.seconds || 0;
+        return timeB - timeA;
+      });
 
-      this.leads = data;
-      this.groupedLeads = [];
+      this.filteredLeads = this.leads;
 
-this.leads.forEach((lead: any) => {
-  const date = lead.createdAt
-    ? lead.createdAt.toDate().toDateString()
-    : 'Unknown Date';
-
-  let group = this.groupedLeads.find((g: any) => g.date === date);
-
-  if (!group) {
-    group = {
-      date: date,
-      leads: []
-    };
-
-    this.groupedLeads.push(group);
-  }
-
-  group.leads.push(lead);
-});
       const today = new Date().toDateString();
 
-this.todayLeads = this.leads.filter((lead: any) => {
+      this.todayLeads = this.leads.filter((lead: any) => {
+        if (!lead.createdAt) return false;
+        return lead.createdAt.toDate().toDateString() === today;
+      }).length;
 
-  if (!lead.createdAt) return false;
-
-  const leadDate = lead.createdAt.toDate().toDateString();
-
-  return leadDate === today;
-
-}).length;
-
-      console.log(this.leads);
-
+      this.makeGroups();
     });
-
   }
 
+  searchLeads() {
+    const text = this.searchText.toLowerCase();
+
+    this.filteredLeads = this.leads.filter((lead: any) =>
+      lead.name?.toLowerCase().includes(text) ||
+      lead.mobile?.includes(text) ||
+      lead.cityState?.toLowerCase().includes(text)
+    );
+
+    this.makeGroups();
+  }
+
+  makeGroups() {
+    this.groupedLeads = [];
+
+    this.filteredLeads.forEach((lead: any) => {
+      const date = lead.createdAt
+        ? lead.createdAt.toDate().toDateString()
+        : 'Unknown Date';
+
+      let group = this.groupedLeads.find((g: any) => g.date === date);
+
+      if (!group) {
+        group = { date, leads: [] };
+        this.groupedLeads.push(group);
+      }
+
+      group.leads.push(lead);
+    });
+  }
 }

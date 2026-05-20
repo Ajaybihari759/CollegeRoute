@@ -6,11 +6,13 @@
 }
 
 .admin-header{
-  background: white;
+  background: linear-gradient(135deg, #ffffff, #eff6ff);
   padding: 25px;
   border-radius: 20px;
   margin-bottom: 25px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 30px rgba(37,99,235,0.10);
+  border: 1px solid #dbeafe;
+}
 
   h1{
     font-size: 32px;
@@ -22,7 +24,7 @@
   p{
     color: #6b7280;
   }
-}
+
 
 .stats-grid{
   display: grid;
@@ -32,10 +34,12 @@
 }
 
 .stat-card{
-  background: white;
+  background: linear-gradient(135deg, #ffffff, #f0f7ff);
   padding: 30px;
   border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 30px rgba(37,99,235,0.10);
+  border: 1px solid #dbeafe;
+}
 
   h2{
     color: #2563eb;
@@ -47,7 +51,7 @@
     color: #6b7280;
     font-size: 15px;
   }
-}
+
 
 .table-section{
   background: white;
@@ -106,9 +110,12 @@ td{
 
 @media(max-width:768px){
 
-  .admin-container{
-    padding: 15px;
-  }
+ .admin-container{
+  padding: 30px;
+  background: linear-gradient(135deg, #eef4ff, #f8fbff, #e0f7ff);
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+}
 
   .stats-grid{
     grid-template-columns: 1fr;
@@ -125,4 +132,34 @@ td{
   color: #2563eb;
   font-weight: 700;
   font-size: 15px;
+}
+
+.search-box{
+  margin-bottom: 20px;
+}
+
+.search-box input{
+  width: 100%;
+  padding: 15px 20px;
+  border-radius: 14px;
+  border: 1px solid #dbe2ea;
+  font-size: 15px;
+  outline: none;
+}
+
+.search-box input{
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.status-select{
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid #dbeafe;
+  background: #eff6ff;
+  color: #2563eb;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
 }

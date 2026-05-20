@@ -1,21 +1,32 @@
 <div class="admin-container">
 
   <div class="admin-header">
+    
     <h1>CollegeRoute Admin Dashboard</h1>
     <p>Live Student Leads</p>
+    <div class="search-box">
+
+  <input
+    type="text"
+    placeholder="Search by name, mobile or city..."
+    [(ngModel)]="searchText"
+    (input)="searchLeads()"
+  >
+
+</div>
   </div>
 
   <div class="stats-grid">
-    <div class="stat-card">
-     <h2>{{todayLeads}}</h2>
-<p>Today Leads</p>
-    </div>
+    
+     <div class="stat-card">
+  <h2>{{filteredLeads.length}}</h2>
+  <p>Total Leads</p>
+</div>
 
-    <div class="stat-card">
-      <h2>{{leads.length}}</h2>
-      <p>Today Leads</p>
-    </div>
-
+  <div class="stat-card">
+  <h2>{{todayLeads}}</h2>
+  <p>Today Leads</p>
+</div>
     <div class="stat-card">
       <h2>0</h2>
       <p>Pending Calls</p>
@@ -57,7 +68,7 @@
       </td>
     </tr>
 
-    <tr *ngFor="let lead of group.leads">
+    <tr *ngFor="let lead of filteredLeads">
       <td>{{lead.name}}</td>
       <td>{{lead.gender}}</td>
       <td>{{lead.mobile}}</td>
@@ -70,7 +81,22 @@
       <td>{{lead.course}}</td>
       <td>{{lead.budget}}</td>
       <td>{{lead.educationLoan}}</td>
-      <td><span class="status new">{{lead.status}}</span></td>
+      <td>
+        <select
+          class="status-select"
+          [(ngModel)]="lead.status"
+           >
+
+          <option value="New Lead">New Lead</option>
+
+          <option value="Contacted">Contacted</option>
+
+          <option value="Interested">Interested</option>
+
+          <option value="Converted">Converted</option>
+
+    </select>
+</td>
     </tr>
 
   </ng-container>
