@@ -1,0 +1,82 @@
+<div class="admin-container">
+
+  <div class="admin-header">
+    <h1>CollegeRoute Admin Dashboard</h1>
+    <p>Live Student Leads</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+     <h2>{{todayLeads}}</h2>
+<p>Today Leads</p>
+    </div>
+
+    <div class="stat-card">
+      <h2>{{leads.length}}</h2>
+      <p>Today Leads</p>
+    </div>
+
+    <div class="stat-card">
+      <h2>0</h2>
+      <p>Pending Calls</p>
+    </div>
+
+    <div class="stat-card">
+      <h2>0%</h2>
+      <p>Conversion Rate</p>
+    </div>
+  </div>
+
+  <div class="table-section">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Gender</th>
+          <th>Mobile</th>
+          <th>WhatsApp</th>
+          <th>City / State</th>
+          <th>Stream</th>
+          <th>Board</th>
+          <th>Passing Year</th>
+          <th>12th %</th>
+          <th>Course</th>
+          <th>Budget</th>
+          <th>Loan</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+  <ng-container *ngFor="let group of groupedLeads">
+
+    <tr>
+      <td colspan="13" class="date-row">
+        {{ group.date }}
+      </td>
+    </tr>
+
+    <tr *ngFor="let lead of group.leads">
+      <td>{{lead.name}}</td>
+      <td>{{lead.gender}}</td>
+      <td>{{lead.mobile}}</td>
+      <td>{{lead.whatsapp}}</td>
+      <td>{{lead.cityState}}</td>
+      <td>{{lead.stream}}</td>
+      <td>{{lead.board}}</td>
+      <td>{{lead.passingYear}}</td>
+      <td>{{lead.percentage}}</td>
+      <td>{{lead.course}}</td>
+      <td>{{lead.budget}}</td>
+      <td>{{lead.educationLoan}}</td>
+      <td><span class="status new">{{lead.status}}</span></td>
+    </tr>
+
+  </ng-container>
+
+</tbody>
+    </table>
+  </div>
+
+</div>
