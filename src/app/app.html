@@ -1,16 +1,16 @@
+<app-counselor-register *ngIf="isCounselorRegisterPage"></app-counselor-register>
 <app-admin *ngIf="isAdminPage"></app-admin>
 
-<div *ngIf="!isAdminPage">
-
+<div *ngIf="!isAdminPage && !isCounselorRegisterPage">
 <div *ngIf="isAdminPage" style="padding:40px; font-size:30px; font-weight:bold;">
   Admin Dashboard Working ✅
 </div>
 
-<div *ngIf="!isAdminPage">
+<div *ngIf="!isAdminPage && !isCounselorRegisterPage">
 
 <app-admin *ngIf="isAdminPage"></app-admin>
 
-<div *ngIf="!isAdminPage">
+<div *ngIf="!isAdminPage && !isCounselorRegisterPage">
 
 <div class="main-container">
 

@@ -1,3 +1,5 @@
+import { CounselorRegister } from './counselor-register/counselor-register';
+
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,12 +9,14 @@ import { AdminComponent } from './admin/admin';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, AdminComponent],
+ 
+  imports: [CommonModule, FormsModule, AdminComponent, CounselorRegister],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 
 export class AppComponent {
+  isCounselorRegisterPage = window.location.pathname === '/counselor-register';
   protected readonly title = signal('college-route');
 
   isAdminPage = window.location.pathname === '/admin';
