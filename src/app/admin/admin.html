@@ -4,14 +4,34 @@
     <h1>CollegeRoute Admin Dashboard</h1>
     <p>Live Student Leads</p>
 
-    <div class="search-box">
-      <input
-        type="text"
-        placeholder="Search by name, mobile or city..."
-        [(ngModel)]="searchText"
-        (input)="searchLeads()"
-      >
-    </div>
+<div class="search-box">
+
+  <input
+    type="text"
+    placeholder="Search by name, mobile or city..."
+    [(ngModel)]="searchText"
+    (input)="searchLeads()"
+  >
+
+</div>
+
+<div class="counselor-filter">
+
+  <select
+    [(ngModel)]="selectedCounselor"
+    (change)="filterByCounselor()"
+  >
+    <option value="All">All Counselors</option>
+
+    <option
+      *ngFor="let counselor of counselors"
+      [value]="counselor.name"
+    >
+      {{ counselor.name }}
+    </option>
+  </select>
+
+</div>
   </div>
 
      <div class="section-title">
@@ -19,142 +39,57 @@
         <p>Quick insights of leads & counselor activity</p>
      </div>
 
-  <div class="stats-grid">
+   <div class="stats-grid">
 
-  <div class="stat-card" (click)="scrollToTable()">      
+  <div class="stat-card" (click)="scrollToTable()">
     <h2>{{filteredLeads.length}}</h2>
-      <p>Total Leads</p>
-    </div>
+    <p>Total Leads</p>
+  </div>
 
-    <div class="stat-card" (click)="scrollToTable()">
-      <h2>{{todayLeads}}</h2>
-      <p>Today Leads</p>
-    </div>
+  <div class="stat-card" (click)="scrollToTable()">
+    <h2>{{todayLeads}}</h2>
+    <p>Today Leads</p>
+  </div>
 
-    <div class="stat-card" (click)="scrollToTable()">
-      <h2>0</h2>
-      <p>Pending Calls</p>
-    </div>
+  <div class="stat-card" (click)="showCounselors = !showCounselors; scrollToCounselors()">
+    <h2>{{counselors.length}}</h2>
+    <p>Total Counselors</p>
+  </div>
 
-    <div class="stat-card" (click)="scrollToTable()">
-      <h2>0%</h2>
-      <p>Conversion Rate</p>
-    </div>
+  <div class="stat-card">
+    <h2>0%</h2>
+    <p>Conversion Rate</p>
+  </div>
 
-    <div
-       class="stat-card clickable-card"
-       (click)="showCounselors = !showCounselors; scrollToCounselors()"
-       >
-      <h2>{{counselors.length}}</h2>
-      <p>Registered Counselors</p>
-    </div>
+  <div class="stat-card">
+    <h2>0</h2>
+    <p>Education Loan</p>
+  </div>
+
+  <div class="stat-card">
+    <h2>0</h2>
+    <p>Special Admission Support</p>
+  </div>
+
+  <div class="stat-card">
+    <h2>0</h2>
+    <p>Admission In Progress</p>
+  </div>
+
+  <div class="stat-card">
+
+    <h2>{{ getAdmissionSuccessCount() }}</h2>
+    <p>Admission Success</p>
+  </div>
+
+  <div class="stat-card">
+    <h2>⬇</h2>
+    <p>Export Excel</p>
+  </div>
 
   </div>
 
-  <div class="status-filter-section">
-    <h2 class="status-heading">Lead Status Overview</h2>
-
-    <div class="status-row">
-      <div
-        class="status-box"
-        *ngFor="let status of statusCards"
-        [class.active]="selectedStatus === status"
-        (click)="filterByStatus(status)"
-      >
-        <h3>{{getStatusCount(status)}}</h3>
-        <p>{{status}}</p>
-      </div>
-    </div>
-  </div>
-
-    <div class="table-section" id="leadTable">    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Gender</th>
-          <th>Mobile</th>
-          <th>WhatsApp</th>
-          <th>City / State</th>
-          <th>Stream</th>
-          <th>Board</th>
-          <th>Passing Year</th>
-          <th>12th %</th>
-          <th>Course</th>
-          <th>Budget</th>
-          <th>Loan</th>
-          <th>Status</th>
-          <th>Remark</th>
-          <th>Call Back</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <ng-container *ngFor="let group of groupedLeads">
-
-          <tr>
-            <td colspan="15" class="date-row">
-              {{group.date}}
-            </td>
-          </tr>
-
-          <tr *ngFor="let lead of group.leads">
-            <td>{{lead.name}}</td>
-            <td>{{lead.gender}}</td>
-            <td>{{lead.mobile}}</td>
-            <td>{{lead.whatsapp}}</td>
-            <td>{{lead.cityState}}</td>
-            <td>{{lead.stream}}</td>
-            <td>{{lead.board}}</td>
-            <td>{{lead.passingYear}}</td>
-            <td>{{lead.percentage}}</td>
-            <td>{{lead.course}}</td>
-            <td>{{lead.budget}}</td>
-            <td>{{lead.educationLoan}}</td>
-
-            <td>
-              <select
-                class="status-select"
-                [(ngModel)]="lead.status"
-                (change)="updateStatus(lead)"
-              >
-                <option value="New Lead">New Lead</option>
-                <option value="Contacted">Contacted</option>
-                <option value="Interested">Interested</option>
-                <option value="Call Back">Call Back</option>
-                <option value="Admission In Progress">Admission In Progress</option>
-                <option value="Counselor Assigned">Counselor Assigned</option>
-                <option value="Converted">Converted</option>
-                <option value="Not Interested">Not Interested</option>
-                <option value="Fake Lead">Fake Lead</option>
-              </select>
-            </td>
-
-            <td>
-              <input
-                class="remark-input"
-                type="text"
-                placeholder="Write remark..."
-                [(ngModel)]="lead.remark"
-                (change)="updateRemark(lead)"
-              >
-            </td>
-
-            <td>
-              <input
-                class="callback-input"
-                type="datetime-local"
-                [(ngModel)]="lead.callbackDate"
-                (change)="updateCallback(lead)"
-              >
-            </td>
-          </tr>
-
-        </ng-container>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="counselor-section" *ngIf="showCounselors">
+  <div class="counselor-section" id="counselorTable" *ngIf="showCounselors">
     <h2>Registered Counselors</h2>
 
     <div class="counselor-table-wrap">
@@ -188,4 +123,3 @@
     </div>
   </div>
 
-</div>

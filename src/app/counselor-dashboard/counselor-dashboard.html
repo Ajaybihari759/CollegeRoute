@@ -1,0 +1,103 @@
+<div class="counselor-container">
+
+  <div class="dashboard-header">
+    <h1>Counselor Dashboard</h1>
+    <p>Manage assigned student leads</p>
+  </div>
+
+  <div class="stats-grid">
+
+    <div class="stat-card" (click)="filterTable('All')">
+     <h2>{{ leads.length }}</h2>
+      <p>Total Leads</p>
+    </div>
+
+    <div class="stat-card">
+      <h2>{{ getTodayLeadsCount() }}</h2>
+      <p>Today Leads</p>
+    </div>
+
+   <div class="stat-card" (click)="filterTable('Contacted')">
+      <h2>{{ getStatusCount('Contacted') }}</h2>
+      <p>Contacted</p>
+    </div>
+
+    <div class="stat-card" (click)="filterTable('Call Back')">
+      <h2>{{ getStatusCount('Call Back') }}</h2>
+      <p>Call Back</p>
+    </div>
+
+    <div class="stat-card" (click)="filterTable('Interested')">
+     <h2>{{ getStatusCount('Interested') }}</h2>
+      <p>Interested</p>
+    </div>
+
+    <div class="stat-card" (click)="filterTable('Admission In Progress')">
+      <h2>{{ getStatusCount('Admission In Progress') }}</h2>
+      <p>Admission In Progress</p>
+    </div>
+
+    <div class="stat-card" (click)="filterTable('Converted')">
+      <h2>{{ getStatusCount('Converted') }}</h2>
+      <p>Admission Completed</p>
+    </div>
+
+    <div class="stat-card">
+     <h2>{{ getConversionRate() }}%</h2>
+      <p>Not Interested</p>
+    </div>
+
+    <div class="stat-card">
+      <h2>{{ getConversionRate() }}%</h2>
+      <p>Conversion Rate</p>
+    </div>
+
+  </div>
+
+   <div class="lead-table-section" id="counselorLeadTable">
+    Total table rows: {{ filteredLeads.length }}
+
+  <h2>My Assigned Leads</h2>
+
+  <table>
+    <thead>
+  <tr>
+    <th>Lead Date</th>
+    <th>Name</th>
+    <th>Gender</th>
+    <th>Mobile</th>
+    <th>WhatsApp</th>
+    <th>City / State</th>
+    <th>Stream</th>
+    <th>Board</th>
+    <th>Passing Year</th>
+    <th>12th %</th>
+    <th>Course</th>
+    <th>Budget</th>
+    <th>Education Loan</th>
+    <th>Status</th>
+    <th>Remark</th>
+  </tr>
+</thead>
+
+   <tbody>
+  <tr *ngFor="let lead of filteredLeads">
+    <td>{{ lead.name }}</td>
+    <td>{{ lead.gender }}</td>
+    <td>{{ lead.mobile }}</td>
+    <td>{{ lead.whatsapp }}</td>
+    <td>{{ lead.cityState }}</td>
+    <td>{{ lead.stream }}</td>
+    <td>{{ lead.board }}</td>
+    <td>{{ lead.passingYear }}</td>
+    <td>{{ lead.percentage }}</td>
+    <td>{{ lead.course }}</td>
+    <td>{{ lead.budget }}</td>
+    <td>{{ lead.educationLoan }}</td>
+    <td>{{ lead.status }}</td>
+    <td>{{ lead.remark || 'No remark' }}</td>
+  </tr>
+</tbody>
+  </table>
+
+</div>

@@ -1,3 +1,5 @@
+
+import { CounselorDashboard } from './counselor-dashboard/counselor-dashboard';
 import { CounselorRegister } from './counselor-register/counselor-register';
 
 import { Component, signal } from '@angular/core';
@@ -9,13 +11,13 @@ import { AdminComponent } from './admin/admin';
 @Component({
   selector: 'app-root',
   standalone: true,
- 
-  imports: [CommonModule, FormsModule, AdminComponent, CounselorRegister],
+  imports: [CommonModule, FormsModule, AdminComponent, CounselorRegister, CounselorDashboard],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 
 export class AppComponent {
+  isCounselorDashboardPage = window.location.pathname === '/counselor-dashboard';
   isCounselorRegisterPage = window.location.pathname === '/counselor-register';
   protected readonly title = signal('college-route');
 

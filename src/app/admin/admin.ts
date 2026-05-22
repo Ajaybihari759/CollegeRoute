@@ -20,15 +20,21 @@ import {
 export class AdminComponent implements OnInit {
 
  scrollToTable() {
+
   this.showCounselors = false;
 
-  const table = document.getElementById('leadTable');
+  setTimeout(() => {
 
-  if (table) {
-    table.scrollIntoView({
-      behavior: 'smooth'
-    });
-  }
+    const table = document.getElementById('leadTable');
+
+    if (table) {
+      table.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+
+  }, 300);
 
 }
 
@@ -39,14 +45,13 @@ scrollToCounselors() {
     const section = document.getElementById('counselorTable');
 
     if (section) {
-
       section.scrollIntoView({
-        behavior: 'smooth'
+        behavior: 'smooth',
+        block: 'start'
       });
-
     }
 
-  }, 100);
+  }, 300);
 
 }
 
@@ -59,7 +64,9 @@ scrollToCounselors() {
   searchText = '';
 
   selectedStatus = 'All Leads';
+  selectedCounselor = 'All';
   showCounselors = false;
+  
 
 statusCards = [
   'All Leads',
@@ -132,6 +139,18 @@ this.todayLeads = this.leads.filter((lead: any) => {
 
     this.makeGroups();
   }
+
+  filterByCounselor() {
+  if (this.selectedCounselor === 'All') {
+    this.filteredLeads = this.leads;
+  } else {
+    this.filteredLeads = this.leads.filter((lead: any) =>
+      lead.assignedTo === this.selectedCounselor
+    );
+  }
+
+  this.makeGroups();
+}
 
  filterByStatus(status: string) {
 
@@ -213,6 +232,30 @@ async updateCallback(lead: any) {
   await updateDoc(leadDoc, {
     callbackDate: lead.callbackDate || ''
   });
+}
+
+async assignCounselor(lead: any) {
+
+  const leadRef = doc(
+    this.firestore,
+    'student_leads',
+    lead.id
+  );
+
+  await updateDoc(leadRef, {
+    assignedTo: lead.assignedTo,
+    assignedDate: new Date().toISOString(),
+    assignedBy: 'Admin'
+  });
+
+  this.filterByCounselor();
+}
+
+  getAdmissionSuccessCount() {
+  return this.filteredLeads.filter((lead: any) =>
+    lead.status === 'Converted' ||
+    lead.status === 'Admission Completed'
+  ).length;
 }
 
 }
