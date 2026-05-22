@@ -1,53 +1,109 @@
 <div class="counselor-container">
 
-  <div class="dashboard-header">
-    <h1>Counselor Dashboard</h1>
-    <p>Manage assigned student leads</p>
+  <div class="counselor-info-strip">
+
+  <div>
+    <h2>Welcome, {{ counselorName }} 👋</h2>
+    <p>Here are your assigned student leads and follow-up tasks.</p>
   </div>
+
+ <div class="profile-upload-box">
+
+  <div class="profile-preview">
+    <img
+  *ngIf="profileImage"
+  [src]="profileImage"
+  alt="Profile"
+>
+
+<span *ngIf="!profileImage">
+  👤
+</span>
+  </div>
+
+  <label>
+    Add Profile
+   <input
+  type="file"
+  accept="image/*"
+  (change)="onProfileSelect($event)"
+>
+  </label>
+
+</div>
+
+</div>
 
   <div class="stats-grid">
 
-    <div class="stat-card" (click)="filterTable('All')">
+    <div
+  class="stat-card"
+  [class.active-card]="selectedStatus === 'All'"
+  (click)="filterTable('All')">
      <h2>{{ leads.length }}</h2>
       <p>Total Leads</p>
     </div>
 
-    <div class="stat-card">
+   <div
+  class="stat-card"
+  [class.active-card]="selectedStatus === 'Today Leads'"
+  (click)="filterTable('Today Leads')">
       <h2>{{ getTodayLeadsCount() }}</h2>
       <p>Today Leads</p>
     </div>
 
-   <div class="stat-card" (click)="filterTable('Contacted')">
+   <div
+  class="stat-card"
+  [class.active-card]="selectedStatus === 'Contacted'"
+  (click)="filterTable('Contacted')">
       <h2>{{ getStatusCount('Contacted') }}</h2>
       <p>Contacted</p>
     </div>
 
-    <div class="stat-card" (click)="filterTable('Call Back')">
+    <div
+  class="stat-card"
+  [class.active-card]="selectedStatus === 'Call Back'"
+  (click)="filterTable('Call Back')">
       <h2>{{ getStatusCount('Call Back') }}</h2>
       <p>Call Back</p>
     </div>
 
-    <div class="stat-card" (click)="filterTable('Interested')">
+    <div
+  class="stat-card"
+  [class.active-card]="selectedStatus === 'Interested'"
+  (click)="filterTable('Interested')">
      <h2>{{ getStatusCount('Interested') }}</h2>
       <p>Interested</p>
     </div>
 
-    <div class="stat-card" (click)="filterTable('Admission In Progress')">
+    <div
+  class="stat-card"
+  [class.active-card]="selectedStatus === 'Admission In Progress'"
+  (click)="filterTable('Admission In Progress')">
       <h2>{{ getStatusCount('Admission In Progress') }}</h2>
       <p>Admission In Progress</p>
     </div>
 
-    <div class="stat-card" (click)="filterTable('Converted')">
+    <div
+  class="stat-card"
+  [class.active-card]="selectedStatus === 'Converted'"
+  (click)="filterTable('Converted')">
       <h2>{{ getStatusCount('Converted') }}</h2>
       <p>Admission Completed</p>
     </div>
 
-    <div class="stat-card">
+   <div
+  class="stat-card"
+  [class.active-card]="selectedStatus === 'Not Interested'"
+  (click)="filterTable('Not Interested')">
      <h2>{{ getConversionRate() }}%</h2>
       <p>Not Interested</p>
     </div>
 
-    <div class="stat-card">
+    <div
+  class="stat-card"
+  [class.active-card]="selectedStatus === 'Conversion Rate'"
+  (click)="filterTable('Conversion Rate')">
       <h2>{{ getConversionRate() }}%</h2>
       <p>Conversion Rate</p>
     </div>
@@ -55,14 +111,31 @@
   </div>
 
    <div class="lead-table-section" id="counselorLeadTable">
-    Total table rows: {{ filteredLeads.length }}
+
+  <div class="table-header">
 
   <h2>My Assigned Leads</h2>
+
+  <input
+  type="text"
+  class="search-box"
+  placeholder="Search by name, mobile, course..."
+  [(ngModel)]="searchText"
+  (input)="searchLeads()"
+>
+
+  <button
+  class="export-btn"
+  (click)="exportExcel()"
+>
+    ⬇ Export Excel
+  </button>
+
+</div>
 
   <table>
     <thead>
   <tr>
-    <th>Lead Date</th>
     <th>Name</th>
     <th>Gender</th>
     <th>Mobile</th>
@@ -75,17 +148,45 @@
     <th>Course</th>
     <th>Budget</th>
     <th>Education Loan</th>
+    <th>Priority</th>
     <th>Status</th>
+    <th>Follow Up</th>
     <th>Remark</th>
   </tr>
 </thead>
 
    <tbody>
-  <tr *ngFor="let lead of filteredLeads">
+  <ng-container *ngFor="let group of groupedLeads">
+
+  <tr class="date-row">
+    <td colspan="16">
+      {{ group.date }}
+    </td>
+  </tr>
+
+  <tr
+  *ngFor="let lead of group.leads"
+  [ngClass]="{
+    'high-priority': lead.priority === 'High',
+    'medium-priority': lead.priority === 'Medium',
+    'low-priority': lead.priority === 'Low'
+    
+  }"
+>
     <td>{{ lead.name }}</td>
     <td>{{ lead.gender }}</td>
     <td>{{ lead.mobile }}</td>
-    <td>{{ lead.whatsapp }}</td>
+    <td>
+
+  <a
+    class="whatsapp-btn"
+    [href]="'https://wa.me/91' + lead.whatsapp"
+    target="_blank"
+  >
+    💬 Chat
+  </a>
+
+</td>
     <td>{{ lead.cityState }}</td>
     <td>{{ lead.stream }}</td>
     <td>{{ lead.board }}</td>
@@ -94,10 +195,84 @@
     <td>{{ lead.course }}</td>
     <td>{{ lead.budget }}</td>
     <td>{{ lead.educationLoan }}</td>
-    <td>{{ lead.status }}</td>
-    <td>{{ lead.remark || 'No remark' }}</td>
+
+    <td>
+
+  <select
+    class="priority-select"
+    [(ngModel)]="lead.priority"
+    (change)="updatePriority(lead)"
+  >
+
+    <option value="High">🟢 High</option>
+
+    <option value="Medium">🟡 Medium</option>
+
+    <option value="Low">🔴 Low</option>
+
+  </select>
+
+</td>
+    
+
+    <td>
+  <select
+    class="status-select"
+    [(ngModel)]="lead.status"
+    (change)="updateLeadStatus(lead)"
+  >
+
+    <option value="New Lead">New Lead</option>
+    <option value="Contacted">Contacted</option>
+    <option value="Call Back">Call Back</option>
+    <option value="Interested">Interested</option>
+    <option value="Admission In Progress">Admission In Progress</option>
+    <option value="Converted">Converted</option>
+    <option value="Not Interested">Not Interested</option>
+    <option value="Fake Lead">Fake Lead</option>
+
+  </select>
+
+</td>
+
+<td>
+
+  <input
+   type="datetime-local"
+    class="followup-input"
+    [(ngModel)]="lead.followUpDate"
+    (input)="updateFollowUpDate(lead)"
+  >
+
+</td>
+
+   <td>
+  <input
+    class="remark-input"
+    type="text"
+    placeholder="Write remark..."
+    [(ngModel)]="lead.remark"
+    (change)="updateRemark(lead)"
+  >
+</td>
   </tr>
+</ng-container>
+
 </tbody>
   </table>
+
+  <div class="profile-preview">
+
+  <img
+    *ngIf="profileImage"
+    [src]="profileImage"
+    alt="Profile"
+  >
+
+  <span *ngIf="!profileImage">
+    👤
+  </span>
+
+</div>
 
 </div>
