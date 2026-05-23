@@ -96,7 +96,7 @@
   class="stat-card"
   [class.active-card]="selectedStatus === 'Not Interested'"
   (click)="filterTable('Not Interested')">
-     <h2>{{ getConversionRate() }}%</h2>
+     <h2>{{ getNotInterestedRate() }}%</h2>
       <p>Not Interested</p>
     </div>
 
@@ -123,6 +123,16 @@
   [(ngModel)]="searchText"
   (input)="searchLeads()"
 >
+
+<div
+  class="reminder-bell"
+  (click)="filterTable('Due Follow Ups')"
+>
+  🔔
+  <span *ngIf="getDueFollowUpsCount() > 0">
+    {{ getDueFollowUpsCount() }}
+  </span>
+</div>
 
   <button
   class="export-btn"
@@ -235,10 +245,10 @@
 
 </td>
 
-<td>
+<td *ngIf="lead.status === 'Call Back'">
 
   <input
-   type="datetime-local"
+    type="datetime-local"
     class="followup-input"
     [(ngModel)]="lead.followUpDate"
     (input)="updateFollowUpDate(lead)"
@@ -246,6 +256,11 @@
 
 </td>
 
+<td *ngIf="lead.status !== 'Call Back'">
+
+  --
+
+</td>
    <td>
   <input
     class="remark-input"

@@ -47,10 +47,14 @@ if (savedImage) {
 
   this.ngZone.run(() => {
 
-  this.leads = data;
-this.filteredLeads = [...data];
-this.makeGroups();
+ this.leads = data.filter((lead: any) =>
+  lead.assignedTo?.trim().toLowerCase() ===
+  this.counselorName.trim().toLowerCase()
+);
 
+this.filteredLeads = [...this.leads];
+
+this.makeGroups();
 });
 
 
@@ -83,6 +87,20 @@ getConversionRate() {
   );
 
 }
+
+getNotInterestedRate() {
+
+  if (this.leads.length === 0) {
+    return 0;
+  }
+
+  const notInterested = this.leads.filter((lead: any) =>
+    lead.status === 'Not Interested'
+  ).length;
+
+  return Math.round((notInterested / this.leads.length) * 100);
+}
+
 
 async updateLeadStatus(lead: any) {
 
@@ -177,6 +195,14 @@ else if (status === 'Today') {
       .toDateString() === today;
 
   });
+
+}
+
+else if (status === 'Due Follow Ups') {
+
+  this.filteredLeads = this.leads.filter((lead: any) =>
+    this.isFollowUpDue(lead.followUpDate)
+  );
 
 }
 
@@ -319,6 +345,18 @@ isFollowUpDue(date: string): boolean {
   const now = new Date();
 
   return followUp <= now;
+
+}
+
+getDueFollowUpsCount() {
+
+  return this.leads.filter((lead: any) =>
+
+    lead.status === 'Call Back' &&
+
+    this.isFollowUpDue(lead.followUpDate)
+
+  ).length;
 
 }
 
