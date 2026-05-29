@@ -1,293 +1,230 @@
-<div class="counselor-container">
 
-  <div class="counselor-info-strip">
+<div class="dashboard-container">
 
-  <div>
-    <h2>Welcome, {{ counselorName }} 👋</h2>
-    <p>Here are your assigned student leads and follow-up tasks.</p>
+  <div class="dashboard-header">
+    <h1>Counselor Dashboard</h1>
+    <p>Manage all student leads</p>
   </div>
-
- <div class="profile-upload-box">
-
-  <div class="profile-preview">
-    <img
-  *ngIf="profileImage"
-  [src]="profileImage"
-  alt="Profile"
->
-
-<span *ngIf="!profileImage">
-  👤
-</span>
-  </div>
-
-  <label>
-    Add Profile
-   <input
-  type="file"
-  accept="image/*"
-  (change)="onProfileSelect($event)"
->
-  </label>
-
-</div>
-
-</div>
 
   <div class="stats-grid">
 
-    <div
-  class="stat-card"
-  [class.active-card]="selectedStatus === 'All'"
-  (click)="filterTable('All')">
-     <h2>{{ leads.length }}</h2>
+    <div class="stat-card" (click)="filterTable('All')">
+      <h2>{{ leads.length }}</h2>
       <p>Total Leads</p>
     </div>
 
-   <div
-  class="stat-card"
-  [class.active-card]="selectedStatus === 'Today Leads'"
-  (click)="filterTable('Today Leads')">
-      <h2>{{ getTodayLeadsCount() }}</h2>
+    <div class="stat-card" (click)="filterTable('Today')">
+      <h2>{{ todayLeads }}</h2>
       <p>Today Leads</p>
     </div>
 
-   <div
-  class="stat-card"
-  [class.active-card]="selectedStatus === 'Contacted'"
-  (click)="filterTable('Contacted')">
-      <h2>{{ getStatusCount('Contacted') }}</h2>
-      <p>Contacted</p>
-    </div>
-
-    <div
-  class="stat-card"
-  [class.active-card]="selectedStatus === 'Call Back'"
-  (click)="filterTable('Call Back')">
-      <h2>{{ getStatusCount('Call Back') }}</h2>
-      <p>Call Back</p>
-    </div>
-
-    <div
-  class="stat-card"
-  [class.active-card]="selectedStatus === 'Interested'"
-  (click)="filterTable('Interested')">
-     <h2>{{ getStatusCount('Interested') }}</h2>
-      <p>Interested</p>
-    </div>
-
-    <div
-  class="stat-card"
-  [class.active-card]="selectedStatus === 'Admission In Progress'"
-  (click)="filterTable('Admission In Progress')">
-      <h2>{{ getStatusCount('Admission In Progress') }}</h2>
-      <p>Admission In Progress</p>
-    </div>
-
-    <div
-  class="stat-card"
-  [class.active-card]="selectedStatus === 'Converted'"
-  (click)="filterTable('Converted')">
+    <div class="stat-card" (click)="filterTable('Converted')">
       <h2>{{ getStatusCount('Converted') }}</h2>
-      <p>Admission Completed</p>
+      <p>Converted</p>
     </div>
 
-   <div
-  class="stat-card"
-  [class.active-card]="selectedStatus === 'Not Interested'"
-  (click)="filterTable('Not Interested')">
-     <h2>{{ getNotInterestedRate() }}%</h2>
-      <p>Not Interested</p>
+    <div class="stat-card" (click)="filterTable('Admission In Progress')">
+      <h2>{{ getStatusCount('Admission In Progress') }}</h2>
+      <p>In Progress</p>
     </div>
 
-    <div
-  class="stat-card"
-  [class.active-card]="selectedStatus === 'Conversion Rate'"
-  (click)="filterTable('Conversion Rate')">
-      <h2>{{ getConversionRate() }}%</h2>
-      <p>Conversion Rate</p>
-    </div>
+    <div class="stat-card" (click)="filterTable('Contacted')">
+  <h2>{{ getStatusCount('Contacted') }}</h2>
+  <p>Contacted</p>
+</div>
+
+<div class="stat-card" (click)="filterTable('Call Back')">
+  <h2>{{ getStatusCount('Call Back') }}</h2>
+  <p>Call Back</p>
+</div>
+
+<div class="stat-card" (click)="filterTable('Interested')">
+  <h2>{{ getStatusCount('Interested') }}</h2>
+  <p>Interested</p>
+</div>
+
+<div class="stat-card" (click)="filterTable('Not Interested')">
+  <h2>{{ getStatusCount('Not Interested') }}</h2>
+  <p>Not Interested</p>
+</div>
+
+ <div class="stat-card">
+  <h2>₹0</h2>
+  <p>Revenue</p>
+</div>
 
   </div>
 
-   <div class="lead-table-section" id="counselorLeadTable">
+  <div class="search-box">
+    <input
+      type="text"
+      placeholder="Search student..."
+      [(ngModel)]="searchTerm"
+      (input)="searchLead()"
+    >
+  </div>
 
-  <div class="table-header">
+  <button class="export-btn" (click)="exportExcel()">
+  ⬇ Export Current Table
+</button>
 
-  <h2>My Assigned Leads</h2>
+  <div class="table-container">
 
-  <input
-  type="text"
-  class="search-box"
-  placeholder="Search by name, mobile, course..."
-  [(ngModel)]="searchText"
-  (input)="searchLeads()"
+    <table>
+
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Mobile</th>
+          <th>State</th>
+          <th>City</th>
+          <th>Level</th>
+          <th>Course</th>
+          <th>Status</th>
+          <th>Remark</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr
+  *ngFor="let lead of filteredLeads"
+  class="lead-row"
+  (click)="openLeadDetails(lead)"
 >
+          <td>{{ lead.name }}</td>
+          <td>{{ lead.email }}</td>
+          <td>{{ lead.mobile }}</td>
+          <td>{{ lead.state }}</td>
+          <td>{{ lead.city }}</td>
+          <td>{{ lead.level }}</td>
+          <td>{{ lead.course }}</td>
 
-<div
-  class="reminder-bell"
-  (click)="filterTable('Due Follow Ups')"
+          <td>
+
+           <select
+  class="status-select"
+  [ngClass]="getStatusClass(lead.admissionStatus)"
+  [(ngModel)]="lead.admissionStatus"
+  (click)="$event.stopPropagation()"
+  (change)="updateLeadStatus(lead)"
 >
-  🔔
-  <span *ngIf="getDueFollowUpsCount() > 0">
-    {{ getDueFollowUpsCount() }}
-  </span>
-</div>
+             <option value="Not Started">Not Started</option>
+             <option value="Contacted">Contacted</option>
+             <option value="Call Back">Call Back</option>
+             <option value="Interested">Interested</option>
+             <option value="Admission In Progress">Admission In Progress</option>
+             <option value="Converted">Converted</option>
+             <option value="Not Interested">Not Interested</option>
+            </select>
 
-  <button
-  class="export-btn"
-  (click)="exportExcel()"
->
-    ⬇ Export Excel
-  </button>
+          </td>
 
-</div>
-
-  <table>
-    <thead>
-  <tr>
-    <th>Name</th>
-    <th>Gender</th>
-    <th>Mobile</th>
-    <th>WhatsApp</th>
-    <th>City / State</th>
-    <th>Stream</th>
-    <th>Board</th>
-    <th>Passing Year</th>
-    <th>12th %</th>
-    <th>Course</th>
-    <th>Budget</th>
-    <th>Education Loan</th>
-    <th>Priority</th>
-    <th>Status</th>
-    <th>Follow Up</th>
-    <th>Remark</th>
-  </tr>
-</thead>
-
-   <tbody>
-  <ng-container *ngFor="let group of groupedLeads">
-
-  <tr class="date-row">
-    <td colspan="16">
-      {{ group.date }}
-    </td>
-  </tr>
-
-  <tr
-  *ngFor="let lead of group.leads"
-  [ngClass]="{
-    'high-priority': lead.priority === 'High',
-    'medium-priority': lead.priority === 'Medium',
-    'low-priority': lead.priority === 'Low'
-    
-  }"
->
-    <td>{{ lead.name }}</td>
-    <td>{{ lead.gender }}</td>
-    <td>{{ lead.mobile }}</td>
-    <td>
-
-  <a
-    class="whatsapp-btn"
-    [href]="'https://wa.me/91' + lead.whatsapp"
-    target="_blank"
-  >
-    💬 Chat
-  </a>
-
-</td>
-    <td>{{ lead.cityState }}</td>
-    <td>{{ lead.stream }}</td>
-    <td>{{ lead.board }}</td>
-    <td>{{ lead.passingYear }}</td>
-    <td>{{ lead.percentage }}</td>
-    <td>{{ lead.course }}</td>
-    <td>{{ lead.budget }}</td>
-    <td>{{ lead.educationLoan }}</td>
-
-    <td>
-
-  <select
-    class="priority-select"
-    [(ngModel)]="lead.priority"
-    (change)="updatePriority(lead)"
-  >
-
-    <option value="High">🟢 High</option>
-
-    <option value="Medium">🟡 Medium</option>
-
-    <option value="Low">🔴 Low</option>
-
-  </select>
-
-</td>
-    
-
-    <td>
-  <select
-    class="status-select"
-    [(ngModel)]="lead.status"
-    (change)="updateLeadStatus(lead)"
-  >
-
-    <option value="New Lead">New Lead</option>
-    <option value="Contacted">Contacted</option>
-    <option value="Call Back">Call Back</option>
-    <option value="Interested">Interested</option>
-    <option value="Admission In Progress">Admission In Progress</option>
-    <option value="Converted">Converted</option>
-    <option value="Not Interested">Not Interested</option>
-    <option value="Fake Lead">Fake Lead</option>
-
-  </select>
-
-</td>
-
-<td *ngIf="lead.status === 'Call Back'">
-
-  <input
-    type="datetime-local"
-    class="followup-input"
-    [(ngModel)]="lead.followUpDate"
-    (input)="updateFollowUpDate(lead)"
-  >
-
-</td>
-
-<td *ngIf="lead.status !== 'Call Back'">
-
-  --
-
-</td>
-   <td>
+          <td (click)="$event.stopPropagation()">
   <input
     class="remark-input"
     type="text"
-    placeholder="Write remark..."
+    placeholder="Add remark..."
     [(ngModel)]="lead.remark"
-    (change)="updateRemark(lead)"
+    (change)="updateLeadStatus(lead)"
   >
 </td>
-  </tr>
-</ng-container>
 
-</tbody>
-  </table>
+        </tr>
 
-  <div class="profile-preview">
+          <tr *ngIf="filteredLeads.length === 0">
+            <td colspan="8" class="empty-message">
+                No leads found yet.
+            </td>
+          </tr>
 
-  <img
-    *ngIf="profileImage"
-    [src]="profileImage"
-    alt="Profile"
-  >
+      </tbody>
 
-  <span *ngIf="!profileImage">
-    👤
-  </span>
+    </table>
+
+  </div>
 
 </div>
+
+<div class="modal-overlay" *ngIf="selectedLead">
+
+  <div class="lead-modal">
+
+    <button class="modal-close" (click)="closeLeadDetails()">
+      ×
+    </button>
+
+    <h2>Student Details</h2>
+
+    <div class="detail-grid">
+
+      <div>
+        <label>Name</label>
+        <p>{{ selectedLead.name }}</p>
+      </div>
+
+      <div>
+        <label>Email</label>
+        <p>{{ selectedLead.email }}</p>
+      </div>
+
+      <div>
+        <label>Mobile</label>
+        <p>{{ selectedLead.mobile }}</p>
+      </div>
+
+      <div>
+        <label>State</label>
+        <p>{{ selectedLead.state }}</p>
+      </div>
+
+      <div>
+        <label>City</label>
+        <p>{{ selectedLead.city }}</p>
+      </div>
+
+      <div>
+        <label>Level</label>
+        <p>{{ selectedLead.level }}</p>
+      </div>
+
+      <div>
+        <label>Course</label>
+        <p>{{ selectedLead.course }}</p>
+      </div>
+
+      <div>
+        <label>Status</label>
+        <p>{{ selectedLead.admissionStatus || 'Not Started' }}</p>
+      </div>
+
+      <div>
+  <label>Remark</label>
+  <p>{{ selectedLead.remark || 'No remark added' }}</p>
+</div>
+
+      <div class="modal-actions">
+
+  <a
+    class="call-btn"
+    [href]="'tel:+91' + selectedLead.mobile"
+  >
+    📞 Call Student
+  </a>
+
+  <a
+    class="whatsapp-btn"
+    [href]="'https://wa.me/91' + selectedLead.mobile"
+    target="_blank"
+  >
+    💬 WhatsApp
+  </a>
+
+</div>  
+
+    </div>
+
+  </div>
 
 </div>

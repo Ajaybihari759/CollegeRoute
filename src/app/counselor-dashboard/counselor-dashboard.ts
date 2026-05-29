@@ -1,363 +1,212 @@
-import * as XLSX from 'xlsx';
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { collection, collectionData,doc,updateDoc  } from '@angular/fire/firestore';
-import { Firestore } from '@angular/fire/firestore';
+import {
+  Firestore,
+  collection,
+  collectionData,
+  doc,
+  updateDoc
+} from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-counselor-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './counselor-dashboard.html',
-  styleUrl: './counselor-dashboard.scss'
+  styleUrls: ['./counselor-dashboard.scss']
 })
-
 export class CounselorDashboard implements OnInit {
+
   leads: any[] = [];
   filteredLeads: any[] = [];
-  groupedLeads: any[] = [];
-   selectedStatus = 'All';
-   searchText = '';
 
-  counselorName = 'Ajay Kumar';
-  profileImage: string = '';
+   selectedLead: any = null;
+
+openLeadDetails(lead: any) {
+  this.selectedLead = lead;
+}
+
+closeLeadDetails() {
+  this.selectedLead = null;
+}
+
+  searchTerm = '';
+  activeFilter = 'All';
+
+  todayLeads = 0;
 
  constructor(
   private firestore: Firestore,
-  private ngZone: NgZone
+  private cdr: ChangeDetectorRef
 ) {}
+
   ngOnInit(): void {
+    const leadsRef = collection(this.firestore, 'student_leads');
 
-    const savedImage = localStorage.getItem('counselorProfile');
+    collectionData(leadsRef, { idField: 'id' }).subscribe((data: any[]) => {
 
-if (savedImage) {
-  this.profileImage = savedImage;
-}
+      this.leads = data.map((lead: any) => ({
+        ...lead,
+        admissionStatus: lead.admissionStatus || 'Not Started'
+      }));
 
-    const leadsRef = collection(
-      this.firestore,
-      'student_leads'
-    );
-
-   collectionData(leadsRef, {
-  idField: 'id'
-}).subscribe((data: any) => {
-  
-
-  this.ngZone.run(() => {
-
- this.leads = data.filter((lead: any) =>
-  lead.assignedTo?.trim().toLowerCase() ===
-  this.counselorName.trim().toLowerCase()
-);
-
-this.filteredLeads = [...this.leads];
-
-this.makeGroups();
-});
-
-
-});
-  }
-
-  
-
-  getStatusCount(status: string) {
-  return this.leads.filter((lead: any) =>
-    lead.status === status
-  ).length;
-}
-
-getConversionRate() {
-
-  if (this.leads.length === 0) {
-    return 0;
-  }
-
-  const converted = this.leads.filter((lead: any) =>
-
-    lead.status === 'Converted' ||
-    lead.status === 'Admission Completed'
-
-  ).length;
-
-  return Math.round(
-    (converted / this.leads.length) * 100
-  );
-
-}
-
-getNotInterestedRate() {
-
-  if (this.leads.length === 0) {
-    return 0;
-  }
-
-  const notInterested = this.leads.filter((lead: any) =>
-    lead.status === 'Not Interested'
-  ).length;
-
-  return Math.round((notInterested / this.leads.length) * 100);
-}
-
-
-async updateLeadStatus(lead: any) {
-
-  const leadRef = doc(
-    this.firestore,
-    'student_leads',
-    lead.id
-  );
-
-  await updateDoc(leadRef, {
-    status: lead.status
-  });
-
-}
-
-async updateRemark(lead: any) {
-
-  const leadRef = doc(
-    this.firestore,
-    'student_leads',
-    lead.id
-  );
-
-  await updateDoc(leadRef, {
-    remark: lead.remark
-  });
-
-}
-
-async updatePriority(lead: any) {
-
-  const leadRef = doc(
-    this.firestore,
-    'student_leads',
-    lead.id
-  );
-
-  await updateDoc(leadRef, {
-    priority: lead.priority
-  });
-
-}
-
-async updateFollowUpDate(lead: any) {
-
-  const leadRef = doc(
-    this.firestore,
-    'student_leads',
-    lead.id
-  );
-
-  await updateDoc(leadRef, {
-    followUpDate: lead.followUpDate
-  });
-
-}
-
-getTodayLeadsCount() {
-
-  const today = new Date().toDateString();
-
-  return this.leads.filter((lead: any) => {
-
-    if (!lead.createdAt) return false;
-
-    return new Date(lead.createdAt).toDateString() === today;
-
-  }).length;
-
-}
-
-filterTable(status: string) {
-
-  this.selectedStatus = status;
-
- if (status === 'All') {
-
-  this.filteredLeads = [...this.leads];
-
-}
-
-else if (status === 'Today') {
-
-  const today = new Date().toDateString();
-
-  this.filteredLeads = this.leads.filter((lead: any) => {
-
-    if (!lead.createdAt?.toDate) return false;
-
-    return lead.createdAt
-      .toDate()
-      .toDateString() === today;
-
-  });
-
-}
-
-else if (status === 'Due Follow Ups') {
-
-  this.filteredLeads = this.leads.filter((lead: any) =>
-    this.isFollowUpDue(lead.followUpDate)
-  );
-
-}
-
-else {
-
-  this.filteredLeads = [...this.leads.filter((lead: any) =>
-    lead.status === status
-  )];
-
-}
-this.makeGroups();
-  setTimeout(() => {
-    const table = document.getElementById('counselorLeadTable');
-
-    if (table) {
-      table.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
+      this.leads.sort((a: any, b: any) => {
+        return this.getLeadTime(b) - this.getLeadTime(a);
       });
-    }
-  }, 100);
 
-}
+      this.todayLeads = this.leads.filter((lead: any) =>
+        this.isTodayLead(lead)
+      ).length;
 
-searchLeads() {
+      this.filterTable(this.activeFilter);
 
-  const text = this.searchText.toLowerCase();
-
-  this.filteredLeads = this.leads.filter((lead: any) =>
-
-    lead.name?.toLowerCase().includes(text) ||
-
-    lead.mobile?.toString().includes(text) ||
-
-    lead.course?.toLowerCase().includes(text)
-
-  );
-
-  this.makeGroups();
-
-}
-
-makeGroups() {
-  const grouped: any = {};
-
-  this.filteredLeads.forEach((lead: any) => {
-    let date = 'Unknown Date';
-
-    if (lead.createdAt?.toDate) {
-      date = lead.createdAt.toDate().toDateString();
-    }
-
-    if (!grouped[date]) {
-      grouped[date] = [];
-    }
-
-    grouped[date].push(lead);
-  });
-
-  this.groupedLeads = Object.keys(grouped).map(date => ({
-    date,
-    leads: grouped[date]
-  }));
-}
-
-onProfileSelect(event: any) {
-
-  const file = event.target.files[0];
-
-  if (!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = () => {
-
-    this.ngZone.run(() => {
-
-      this.profileImage = reader.result as string;
-
-localStorage.setItem(
-  'counselorProfile',
-  this.profileImage
-);
+      this.cdr.detectChanges();
 
     });
+  }
 
-  };
+  getLeadTime(lead: any): number {
+    if (lead.createdAt?.seconds) {
+      return lead.createdAt.seconds * 1000;
+    }
 
-  reader.readAsDataURL(file);
+    if (lead.createdAt) {
+      return new Date(lead.createdAt).getTime();
+    }
 
+    return 0;
+  }
+
+  isTodayLead(lead: any): boolean {
+    const time = this.getLeadTime(lead);
+    if (!time) return false;
+
+    const leadDate = new Date(time);
+    const today = new Date();
+
+    return (
+      leadDate.getDate() === today.getDate() &&
+      leadDate.getMonth() === today.getMonth() &&
+      leadDate.getFullYear() === today.getFullYear()
+    );
+  }
+
+  filterTable(type: string) {
+    this.activeFilter = type;
+
+    if (type === 'All') {
+      this.filteredLeads = [...this.leads];
+      return;
+    }
+
+    if (type === 'Today') {
+      this.filteredLeads = this.leads.filter((lead: any) =>
+        this.isTodayLead(lead)
+      );
+      return;
+    }
+
+    this.filteredLeads = this.leads.filter((lead: any) =>
+      (lead.admissionStatus || 'Not Started') === type
+    );
+  }
+
+  searchLead() {
+    const term = this.searchTerm.toLowerCase();
+
+    this.filteredLeads = this.leads.filter((lead: any) =>
+      lead.name?.toLowerCase().includes(term) ||
+      lead.email?.toLowerCase().includes(term) ||
+      lead.mobile?.includes(term) ||
+      lead.city?.toLowerCase().includes(term) ||
+      lead.state?.toLowerCase().includes(term)
+    );
+  }
+
+  getStatusCount(status: string) {
+    return this.leads.filter((lead: any) =>
+      (lead.admissionStatus || 'Not Started') === status
+    ).length;
+  }
+
+  async updateLeadStatus(lead: any) {
+  if (!lead.id) return;
+
+  const leadRef = doc(this.firestore, 'student_leads', lead.id);
+
+  await updateDoc(leadRef, {
+    admissionStatus: lead.admissionStatus,
+    remark: lead.remark || ''
+  });
+}
+
+  getStatusClass(status: string) {
+    if (status === 'Converted') return 'status-converted';
+    if (status === 'Admission In Progress') return 'status-progress';
+    if (status === 'Contacted') return 'status-contacted';
+    if (status === 'Call Back') return 'status-callback';
+    if (status === 'Interested') return 'status-interested';
+    if (status === 'Not Interested') return 'status-not-interested';
+
+    return 'status-default';
+  }
+
+  async updateLeadRemark(lead: any) {
+  if (!lead.id) return;
+
+  const leadRef = doc(this.firestore, 'student_leads', lead.id);
+
+  await updateDoc(leadRef, {
+    remark: lead.remark || ''
+  });
 }
 
 exportExcel() {
+  const dataToExport = this.filteredLeads;
 
-  console.log('Export leads:', this.leads);
-console.log('Filtered leads:', this.filteredLeads);
+  if (!dataToExport.length) {
+    alert('No data available to export');
+    return;
+  }
 
-  const exportData = this.leads.map((lead: any) => ({
+  const headers = [
+    'Name',
+    'Email',
+    'Mobile',
+    'State',
+    'City',
+    'Level',
+    'Course',
+    'Status',
+    'Remark'
+  ];
 
-    Name: lead.name,
-    Gender: lead.gender,
-    Mobile: lead.mobile,
-    WhatsApp: lead.whatsapp,
-    City: lead.cityState,
-    Stream: lead.stream,
-    Board: lead.board,
-    PassingYear: lead.passingYear,
-    Percentage: lead.percentage,
-    Course: lead.course,
-    Budget: lead.budget,
-    EducationLoan: lead.educationLoan,
-    Status: lead.status,
-    Remark: lead.remark || ''
+  const rows = dataToExport.map((lead: any) => [
+    lead.name || '',
+    lead.email || '',
+    lead.mobile || '',
+    lead.state || '',
+    lead.city || '',
+    lead.level || '',
+    lead.course || '',
+    lead.admissionStatus || 'Not Started',
+    lead.remark || ''
+  ]);
 
-  }));
+  const csvContent =
+    [headers, ...rows]
+      .map(row => row.map(value => `"${value}"`).join(','))
+      .join('\n');
 
- const worksheet: XLSX.WorkSheet =
-  XLSX.utils.json_to_sheet(exportData);
+  const blob = new Blob([csvContent], {
+    type: 'text/csv;charset=utf-8;'
+  });
 
-const workbook: XLSX.WorkBook = {
-  Sheets: {
-    data: worksheet
-  },
-  SheetNames: ['data']
-};
-
-XLSX.writeFile(
-  workbook,
-  'Counselor-Leads.xlsx'
-);
-
-}
-
-isFollowUpDue(date: string): boolean {
-
-  if (!date) return false;
-
-  const followUp = new Date(date);
-
-  const now = new Date();
-
-  return followUp <= now;
-
-}
-
-getDueFollowUpsCount() {
-
-  return this.leads.filter((lead: any) =>
-
-    lead.status === 'Call Back' &&
-
-    this.isFollowUpDue(lead.followUpDate)
-
-  ).length;
-
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `${this.activeFilter || 'leads'}-leads.csv`;
+  link.click();
 }
 
 }

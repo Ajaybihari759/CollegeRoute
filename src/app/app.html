@@ -1,254 +1,185 @@
-<app-counselor-dashboard *ngIf="isCounselorDashboardPage"></app-counselor-dashboard>
-
-<app-counselor-register *ngIf="isCounselorRegisterPage"></app-counselor-register>
-
 <app-admin *ngIf="isAdminPage"></app-admin>
+<app-counselor-register *ngIf="isCounselorRegisterPage"></app-counselor-register>
+<app-counselor-dashboard *ngIf="isCounselorDashboardPage"></app-counselor-dashboard>
 
 <div *ngIf="!isAdminPage && !isCounselorRegisterPage && !isCounselorDashboardPage">
 
-<div class="main-container">
+  <div class="top-banner">
+    🎓 Admission Open 2026 — Free counselling available for limited seats
+  </div>
 
-<nav class="navbar">
-  <div class="logo-box">
-    <div class="logo-icon">🎓</div>
-    <div>
-      <h2>CollegeRoute</h2>
-      <span>Admission Guidance</span>
+  <nav class="navbar">
+    <div class="brand">
+      <div class="logo-icon">🎓</div>
+      <div>
+        <h2>CollegeRoute</h2>
+        <span>Admission Guidance</span>
+      </div>
     </div>
-  </div>
 
-  <div class="nav-links">
-    <a>Home</a>
-    <a>Courses</a>
-    <a>Colleges</a>
-    <a>Contact</a>
-  </div>
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#contact">Contact</a>
+    </div>
 
-  <button class="nav-btn">Free Call</button>
-</nav>
+    <button class="free-call-btn" onclick="window.location.href='tel:+917352294364'">
+      Free Call
+    </button>
+  </nav>
 
-  <!-- HERO SECTION -->
-  <section class="hero">
-
+  <section class="hero" id="home">
 
     <div class="hero-left">
 
-      <div class="badge">
-        🎓 Smart Admission Guidance
-      </div>
+      <div class="badge">🎓 Smart Admission Guidance</div>
 
       <h1>
-        12th ke baad best course aur college choose karne me confused ho?
+        Confused about choosing the right course and college after 12th?
       </h1>
 
       <p>
-        Apne marks, budget aur interest ke according best college aur course ke liye free counselling guidance paayein.
+        Get expert counselling based on your interest, location and career goals.
       </p>
 
       <div class="hero-features">
+        <div class="feature-card">📚 <b>Course Guidance</b><span>Interest based counselling</span></div>
+        <div class="feature-card">🏫 <b>College Selection</b><span>Budget & placement wise</span></div>
+        <div class="feature-card">📞 <b>Counsellor Support</b><span>Personal mentor support</span></div>
+      </div>
 
-        <div class="feature-card">
-          <h3>📚 Course Guidance</h3>
-          <span>Interest ke according</span>
+      <section class="why-slider-section">
+        <h2>Why Choose CollegeRoute?</h2>
+
+        <div class="slider-box">
+          <div class="slide">🎓 Smart AI-based college guidance for every student</div>
+          <div class="slide">⚡ Fast admission support with expert counselors</div>
+          <div class="slide">💬 Personal WhatsApp & call support throughout admission</div>
+          <div class="slide">🏆 Trusted platform helping students choose better careers</div>
+        </div>
+      </section>
+
+      <div class="roadmap-card" id="roadmap">
+        <h3>Admission Roadmap</h3>
+        <p class="roadmap-subtitle">From enquiry to final admission — CollegeRoute guides you at every step.</p>
+
+        <div class="roadmap-steps">
+          <div class="roadmap-step"><span>1</span><p>Fill Enquiry Form</p></div>
+          <div class="roadmap-step"><span>2</span><p>CollegeRoute Review</p></div>
+          <div class="roadmap-step"><span>3</span><p>Personal Counselor Assigned</p></div>
+          <div class="roadmap-step"><span>4</span><p>Document Verification</p></div>
+          <div class="roadmap-step"><span>5</span><p>Select Best College</p></div>
+          <div class="roadmap-step"><span>6</span><p>Admission & Bonafide Support</p></div>
         </div>
 
-        <div class="feature-card">
-          <h3>🏫 College Selection</h3>
-          <span>Budget & placement wise</span>
+        <div class="roadmap-note">
+          We support you until your admission is finalized and your course journey starts.
         </div>
-
-        <div class="feature-card">
-          <h3>📞 Counsellor Support</h3>
-          <span>Personal manager support</span>
-        </div>
-
       </div>
 
     </div>
 
-    <!-- FORM -->
-    <div class="form-box">
+    <div class="hero-right" id="contact">
+      <div class="form-card">
+        <h2>Free Counselling Call</h2>
 
-      <h2>Free Counselling Call</h2>
+        <div class="form-group">
+          <label>Student Full Name</label>
+          <input type="text" placeholder="Enter full name" [(ngModel)]="student.name" name="name">
+        </div>
 
-      <form #leadForm="ngForm" (ngSubmit)="submitForm(leadForm)">
+        <div class="form-group">
+          <label>Student Email ID</label>
+          <input type="email" placeholder="example@gmail.com" [(ngModel)]="student.email" name="email">
+        </div>
 
-       <label>Student Name</label>
+        <div class="form-group">
+          <label>+91 Contact Number</label>
+          <input type="text" placeholder="10 digit mobile number" [(ngModel)]="student.mobile" name="mobile">
+        </div>
 
-          <input
-           type="text"
-           placeholder="Enter your full name"
-           [(ngModel)]="student.name"
-           name="name"
-           required
-          >  
-          
-          <label>Gender</label>
-        <select [(ngModel)]="student.gender" name="gender" required>
-          <option value="" disabled selected>Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="Other">Other</option>
-       </select>
+        <div class="form-group">
+          <label>Select State</label>
+          <select [(ngModel)]="student.state" name="state" (change)="onStateChange()">
+            <option value="">Select State</option>
+            <option *ngFor="let state of states" [value]="state">{{ state }}</option>
+          </select>
+        </div>
 
+        <div class="form-group">
+          <label>Select City / District</label>
+          <select [(ngModel)]="student.city" name="city">
+            <option value="">Select City / District</option>
+            <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+          </select>
+        </div>
 
-        <label>Mobile Number</label>
+        <div class="form-group">
+          <label>Level of Study</label>
+          <select [(ngModel)]="student.level" name="level" (change)="onLevelChange()">
+            <option value="">Select Level</option>
+            <option value="Diploma">Diploma</option>
+            <option value="UG">UG</option>
+            <option value="PG">PG</option>
+          </select>
+        </div>
 
-                  <input
-                 type="text"
-                 placeholder="Enter your mobile number"
-                 [(ngModel)]="student.mobile"
-                 name="mobile"
-                 maxlength="10"
-                 required
-                >
+        <div class="form-group" *ngIf="student.level">
+          <label>Select Course</label>
+          <select [(ngModel)]="student.course" name="course">
+            <option value="">Select Course</option>
+            <option *ngFor="let course of courses" [value]="course">{{ course }}</option>
+          </select>
+        </div>
 
-        <label>WhatsApp Number</label>
+        <label class="agree-box">
+          <input type="checkbox" [(ngModel)]="student.agree" name="agree">
+          <span>I agree to be contacted by CollegeRoute counselors.</span>
+        </label>
 
-<input
-  type="text"
-  placeholder="Enter your WhatsApp number"
-  [(ngModel)]="student.whatsapp"
-  name="whatsapp"
-  maxlength="10"
-  required
->
-         <label>City/State</label>
-        <input type="text" 
-        placeholder="City / State" 
-        [(ngModel)]="student.cityState" 
-        name="cityState">
-
-        <label>12th Stream</label>
-
-<select [(ngModel)]="student.stream" name="stream" required>
-
-  <option value="" disabled>
-    Select your stream
-  </option>
-
-  <option value="Science">Science</option>
-  <option value="Commerce">Commerce</option>
-  <option value="Arts">Arts</option>
-
-</select>
-        
-         <label>12th Board</label>
-       <select [(ngModel)]="student.board" name="board" required>
-         <option value="" disabled selected>12th Board</option>
-         <option value="CBSE">CBSE</option>
-         <option value="ICSE">ICSE</option>
-         <option value="Bihar Board">Bihar Board</option>
-         <option value="UP Board">UP Board</option>
-         <option value="State Board">Other State Board</option>
-       </select>
-
-       <label>Passing Year</label>
-     <select [(ngModel)]="student.passingYear" name="passingYear" required>
-  <option value="" disabled selected>Passing Year</option>
-  <option value="2026">2026</option>
-  <option value="2025">2025</option>
-  <option value="2024">2024</option>
-  <option value="2023">2023</option>
-      </select>
-
-
-      <label>12th %</label>
-        <input type="text" placeholder="12th %" [(ngModel)]="student.percentage" name="percentage">
-
-        <label>Intrested Course</label>
-        <input type="text" placeholder="Interested Course" [(ngModel)]="student.course" name="course">
-
-        <label>Your Budget</label>
-        <select [(ngModel)]="student.budget" name="budget" required>
-         <option value="" disabled selected>Budget Range</option>
-         <option value="Under ₹1 Lakh">Under ₹2 Lakh</option>
-         <option value="₹1-3 Lakh">₹2-4 Lakh</option>
-         <option value="₹3-5 Lakh">₹4-6 Lakh</option>
-         <option value="₹5 Lakh+">₹7 Lakh+</option>
-       </select>
-
-       <label>Loan Required</label>
-       <select [(ngModel)]="student.educationLoan" name="educationLoan" required>
-  <option value="" disabled selected>Education Loan Required?</option>
-  <option value="Yes">Yes</option>
-  <option value="No">No</option>
-  <option value="Not Sure">Not Sure</option>
-</select>
-
-        <button type="submit">
-          Submit & Get Free Guidance
+        <button type="button" class="submit-btn" (click)="submitForm(student)">
+          Get Free Counseling
         </button>
-
-      </form>
-
+      </div>
     </div>
 
   </section>
 
-  <!-- TRUST SECTION -->
+  <section class="stats-section">
+    <div class="stat-box"><h2>5000+</h2><p>Students Guided</p></div>
+    <div class="stat-box"><h2>100+</h2><p>College Partners</p></div>
+    <div class="stat-box"><h2>24/7</h2><p>Student Support</p></div>
+    <div class="stat-box"><h2>95%</h2><p>Admission Success</p></div>
+  </section>
 
-<section class="trust-section">
+  <section class="testimonial-section" id="reviews">
+    <h2>What Students Say</h2>
 
-  <div class="trust-box">
-    <h2>5000+</h2>
-    <span>Students Guided</span>
-  </div>
+    <div class="testimonial-slider">
+      <div class="testimonial-track">
 
-  <div class="trust-box">
-    <h2>100+</h2>
-    <span>College Partners</span>
-  </div>
+        <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“CollegeRoute helped me choose the best college without confusion.”<h4>— Rahul Kumar</h4></div>
+        <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“Very supportive counselors and smooth admission process.”<h4>— Priya Sharma</h4></div>
+        <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“Best guidance platform for students after 12th.”<h4>— Aman Raj</h4></div>
+        <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“Fast response and excellent counselling support.”<h4>— Sneha Kumari</h4></div>
 
-  <div class="trust-box">
-    <h2>24/7</h2>
-    <span>Student Support</span>
-  </div>
+        <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“Counselling process was very easy and smooth.”<h4>— Aditya Verma</h4></div>
+        <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“Got admission guidance exactly according to my budget.”<h4>— Neha Singh</h4></div>
+        <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“Very responsive support team and excellent guidance.”<h4>— Vivek Anand</h4></div>
+        <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“CollegeRoute saved a lot of my time during admissions.”<h4>— Muskan Raj</h4></div>
 
-  <div class="trust-box">
-    <h2>95%</h2>
-    <span>Admission Success</span>
-  </div>
-
-</section>
-    
-     <!-- SUCCESS POPUP -->
-
-<div class="success-popup" *ngIf="showSuccess">
-
-  <div class="popup-box">
-
-    <div class="success-icon">
-      ✓
+      </div>
     </div>
+  </section>
 
-    <h2>Congratulations!</h2>
+  <a href="https://wa.me/917352294364" class="whatsapp-float" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+  </a>
 
-    <p>
-      Your details have been submitted successfully.
-      <br><br>
-      Our admission guidance team will contact you very soon.
-    </p>
-
-    <button (click)="showSuccess = false">
-      Close
-    </button>
-
+  <div class="live-popup">
+    <span class="live-dot"></span>
+    {{ liveMessage }}
   </div>
 
 </div>
-
-     <!-- WHATSAPP FLOAT BUTTON -->
-
-<a
-  href="https://wa.me/91 9718567205"
-  class="whatsapp-float"
-  target="_blank"
->
-
-  💬
-
-</a>
-  
-</div>
-  
