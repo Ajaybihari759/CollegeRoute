@@ -39,9 +39,11 @@ export class AppComponent implements OnInit {
     email: '',
     mobile: '',
     state: '',
+    customState: '',
     city: '',
     level: '',
     course: '',
+    customCourse: '',
     agree: false
   };
 
@@ -52,14 +54,8 @@ export class AppComponent implements OnInit {
   states: string[] = [
     'Bihar',
     'Uttar Pradesh',
-    'Delhi',
-    'Maharashtra',
-    'West Bengal',
     'Jharkhand',
-    'Punjab',
-    'Rajasthan',
-    'Gujarat',
-    'Haryana'
+    'Other'
   ];
 
   // =========================
@@ -78,67 +74,65 @@ export class AppComponent implements OnInit {
   // STATE CHANGE
   // =========================
 
-  onStateChange() {
 
-    if (this.student.state === 'Bihar') {
+    districtsByState: any = {
+  Bihar: [
+    'Araria','Arwal','Aurangabad','Banka','Begusarai',
+    'Bhagalpur','Bhojpur','Buxar','Darbhanga','East Champaran',
+    'Gaya','Gopalganj','Jamui','Jehanabad','Kaimur',
+    'Katihar','Khagaria','Kishanganj','Lakhisarai','Madhepura',
+    'Madhubani','Munger','Muzaffarpur','Nalanda','Nawada',
+    'Patna','Purnia','Rohtas','Saharsa','Samastipur',
+    'Saran','Sheikhpura','Sheohar','Sitamarhi','Siwan',
+    'Supaul','Vaishali','West Champaran'
+  ],
 
-      this.cities = [
-        'Patna',
-        'Gaya',
-        'Muzaffarpur',
-        'Bhagalpur',
-        'Darbhanga'
-      ];
+  Jharkhand: [
+    'Bokaro','Chatra','Deoghar','Dhanbad','Dumka',
+    'East Singhbhum','Garhwa','Giridih','Godda','Gumla',
+    'Hazaribagh','Jamtara','Khunti','Koderma','Latehar',
+    'Lohardaga','Pakur','Palamu','Ramgarh','Ranchi',
+    'Sahibganj','Seraikela Kharsawan','Simdega','West Singhbhum'
+  ],
 
-    }
+  'Uttar Pradesh': [
+    'Agra','Aligarh','Ambedkar Nagar','Amethi','Amroha',
+    'Auraiya','Ayodhya','Azamgarh','Baghpat','Bahraich',
+    'Ballia','Balrampur','Banda','Barabanki','Bareilly',
+    'Basti','Bhadohi','Bijnor','Budaun','Bulandshahr',
+    'Chandauli','Chitrakoot','Deoria','Etah','Etawah',
+    'Farrukhabad','Fatehpur','Firozabad','Gautam Buddha Nagar','Ghaziabad',
+    'Ghazipur','Gonda','Gorakhpur','Hamirpur','Hapur',
+    'Hardoi','Hathras','Jalaun','Jaunpur','Jhansi',
+    'Kannauj','Kanpur Dehat','Kanpur Nagar','Kasganj','Kaushambi',
+    'Kheri','Kushinagar','Lalitpur','Lucknow','Maharajganj',
+    'Mahoba','Mainpuri','Mathura','Mau','Meerut',
+    'Mirzapur','Moradabad','Muzaffarnagar','Pilibhit','Pratapgarh',
+    'Prayagraj','Raebareli','Rampur','Saharanpur','Sambhal',
+    'Sant Kabir Nagar','Shahjahanpur','Shamli','Shrawasti','Siddharthnagar',
+    'Sitapur','Sonbhadra','Sultanpur','Unnao','Varanasi'
+  ]
 
-    else if (this.student.state === 'Uttar Pradesh') {
-
-      this.cities = [
-        'Lucknow',
-        'Kanpur',
-        'Noida',
-        'Varanasi',
-        'Prayagraj'
-      ];
-
-    }
-
-    else if (this.student.state === 'Delhi') {
-
-      this.cities = [
-        'New Delhi',
-        'South Delhi',
-        'North Delhi',
-        'East Delhi'
-      ];
-
-    }
-
-    else if (this.student.state === 'Maharashtra') {
-
-      this.cities = [
-        'Mumbai',
-        'Pune',
-        'Nagpur',
-        'Nashik'
-      ];
-
-    }
-
-    else {
-
-      this.cities = [];
-
-    }
-
-    this.student.city = '';
-
-  }
+};
 
   // =========================
   // LEVEL CHANGE
   // =========================
+
+
+  onStateChange() {
+
+  if (this.student.state === 'Other') {
+    this.cities = [];
+    this.student.city = '';
+    return;
+  }
+
+  this.cities =
+    this.districtsByState[this.student.state] || [];
+
+  this.student.city = '';
+}
 
   onLevelChange() {
 
@@ -148,7 +142,8 @@ export class AppComponent implements OnInit {
         'Polytechnic CSE',
         'Mechanical Engineering',
         'Civil Engineering',
-        'Electrical Engineering'
+        'Electrical Engineering',
+        'Other'
       ];
 
     }
@@ -159,7 +154,15 @@ export class AppComponent implements OnInit {
         'B.Tech',
         'BCA',
         'BBA',
-        'B.Com'
+        'B.Com',
+        'MBBS',
+        'GNM',
+        'NURSING',
+        'PHARMACY',
+        'HOTAL MGT',
+        'BHMCT',
+        'LLB',
+        'Other'
       ];
 
     }
@@ -169,7 +172,9 @@ export class AppComponent implements OnInit {
       this.courses = [
         'MBA',
         'MCA',
-        'M.Tech'
+        'LLB',
+        'M.Tech',
+        'Other'
       ];
 
     }
@@ -199,19 +204,20 @@ ngOnInit() {
   submitForm(student: any) {
 
     if (
-      !student.name ||
-      !student.email ||
-      !student.mobile ||
-      !student.state ||
-      !student.city ||
-      !student.level ||
-      !student.course
-    ) {
-
-      alert('Please fill all required fields.');
-      return;
-
-    }
+  !student.name ||
+  !student.email ||
+  !student.mobile ||
+  !student.state ||
+  (student.state === 'Other' && !student.customState) ||
+  !student.city ||
+  !student.level ||
+  !student.course ||
+  (student.course === 'Other' && !student.customCourse) ||
+  !student.agree
+) {
+  alert('Please fill all required fields.');
+  return;
+}
 
     if (!student.agree) {
 
@@ -226,16 +232,16 @@ addDoc(leadsRef, {
   name: student.name,
   email: student.email,
   mobile: student.mobile,
-  state: student.state,
+  state: student.state === 'Other' ? student.customState : student.state,
   city: student.city,
   level: student.level,
-  course: student.course,
+  course: student.course === 'Other' ? student.customCourse : student.course,
   admissionStatus: 'Not Started',
   createdAt: serverTimestamp()
 });
 
 
-    alert('Form submitted successfully 😄🔥');
+    this.showSuccess = true;
 
     // RESET FORM
 
@@ -244,9 +250,11 @@ addDoc(leadsRef, {
       email: '',
       mobile: '',
       state: '',
+      customState: '',
       city: '',
       level: '',
       course: '',
+      customCourse: '',
       agree: false
     };
 
@@ -254,5 +262,7 @@ addDoc(leadsRef, {
     this.courses = [];
 
   }
+
+  
 
 }

@@ -24,7 +24,7 @@
       <a href="#contact">Contact</a>
     </div>
 
-    <button class="free-call-btn" onclick="window.location.href='tel:+917352294364'">
+    <button class="free-call-btn" onclick="window.location.href='tel:+919718567205'">
       Free Call
     </button>
   </nav>
@@ -107,13 +107,37 @@
           </select>
         </div>
 
-        <div class="form-group">
-          <label>Select City / District</label>
-          <select [(ngModel)]="student.city" name="city">
-            <option value="">Select City / District</option>
-            <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
-          </select>
-        </div>
+        <div class="form-group" *ngIf="student.state === 'Other'">
+  <label>Enter State Name</label>
+  <input
+    type="text"
+    [(ngModel)]="student.customState"
+    name="customState"
+    placeholder="Enter your state"
+  >
+</div>
+
+  <div class="form-group" *ngIf="student.state === 'Other' && student.customState">
+  <label>Enter District / City</label>
+  <input
+    type="text"
+    [(ngModel)]="student.city"
+    name="city"
+    placeholder="Enter your district / city"
+  >
+</div>
+
+        <div class="form-group" *ngIf="student.state !== 'Other'">
+  <label>Select City / District</label>
+  <select [(ngModel)]="student.city" name="city">
+    <option value="">Select District</option>
+    <option *ngFor="let city of cities" [value]="city">
+      {{ city }}
+    </option>
+  </select>
+</div>
+
+
 
         <div class="form-group">
           <label>Level of Study</label>
@@ -132,6 +156,16 @@
             <option *ngFor="let course of courses" [value]="course">{{ course }}</option>
           </select>
         </div>
+
+        <div class="form-group" *ngIf="student.course === 'Other'">
+  <label>Enter Course Name</label>
+  <input
+    type="text"
+    [(ngModel)]="student.customCourse"
+    name="customCourse"
+    placeholder="Enter your course"
+  >
+</div>
 
         <label class="agree-box">
           <input type="checkbox" [(ngModel)]="student.agree" name="agree">
@@ -173,13 +207,34 @@
     </div>
   </section>
 
-  <a href="https://wa.me/917352294364" class="whatsapp-float" target="_blank">
+  <a href="https://wa.me/919718567205" class="whatsapp-float" target="_blank">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
   </a>
 
   <div class="live-popup">
     <span class="live-dot"></span>
     {{ liveMessage }}
+  </div>
+
+</div>
+
+<div class="success-overlay" *ngIf="showSuccess">
+
+  <div class="success-popup">
+
+    <div class="success-icon">🎉</div>
+
+    <h2>Congratulations!</h2>
+
+    <p>
+      Your form has been submitted successfully.
+      You will get a call very soon from your assigned counselor.
+    </p>
+
+    <button (click)="showSuccess = false">
+      OK
+    </button>
+
   </div>
 
 </div>
