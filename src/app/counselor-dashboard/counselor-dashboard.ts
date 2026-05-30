@@ -21,6 +21,8 @@ export class CounselorDashboard implements OnInit {
   leads: any[] = [];
   filteredLeads: any[] = [];
 
+  groupedLeads: any[] = [];
+
    selectedLead: any = null;
 
 openLeadDetails(lead: any) {
@@ -92,25 +94,61 @@ closeLeadDetails() {
     );
   }
 
+  makeGroups() {
+
+  const groups: any = {};
+
+  this.filteredLeads.forEach((lead: any) => {
+
+    const time = this.getLeadTime(lead);
+
+    const dateKey = time
+      ? new Date(time).toLocaleDateString('en-IN')
+      : 'No Date';
+
+    if (!groups[dateKey]) {
+      groups[dateKey] = [];
+    }
+
+    groups[dateKey].push(lead);
+
+  });
+
+  this.groupedLeads = Object.keys(groups).map(date => ({
+    date: date,
+    leads: groups[date]
+  }));
+
+}
+
   filterTable(type: string) {
-    this.activeFilter = type;
 
-    if (type === 'All') {
-      this.filteredLeads = [...this.leads];
-      return;
-    }
+  this.activeFilter = type;
 
-    if (type === 'Today') {
-      this.filteredLeads = this.leads.filter((lead: any) =>
-        this.isTodayLead(lead)
-      );
-      return;
-    }
+  if (type === 'All') {
+    this.filteredLeads = [...this.leads];
+  }
 
+  else if (type === 'Today') {
+    this.filteredLeads = this.leads.filter((lead: any) =>
+      this.isTodayLead(lead)
+    );
+  }
+
+  else {
     this.filteredLeads = this.leads.filter((lead: any) =>
       (lead.admissionStatus || 'Not Started') === type
     );
   }
+
+  this.makeGroups();
+
+  setTimeout(() => {
+    document.getElementById('leadTable')?.scrollIntoView({
+      behavior: 'smooth'
+    });
+  }, 100);
+}
 
   searchLead() {
     const term = this.searchTerm.toLowerCase();

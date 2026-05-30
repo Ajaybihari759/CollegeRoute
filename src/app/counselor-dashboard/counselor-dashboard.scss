@@ -323,3 +323,21 @@ tbody tr{
   font-weight:900;
   cursor:pointer;
 }
+
+.date-row td{
+  background:#dbeafe;
+  color:#1d4ed8;
+  font-weight:900;
+  padding:14px 18px;
+  border-radius:10px;
+}
+
+.stat-card.active-card{
+  background:linear-gradient(135deg,#2563eb,#06b6d4) !important;
+  color:white !important;
+}
+
+.stat-card.active-card h2,
+.stat-card.active-card p{
+  color:white !important;
+}

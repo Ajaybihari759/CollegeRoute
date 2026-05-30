@@ -159,7 +159,7 @@ export class AppComponent implements OnInit {
         'GNM',
         'NURSING',
         'PHARMACY',
-        'HOTAL MGT',
+        'HOTAL Management',
         'BHMCT',
         'LLB',
         'Other'
@@ -172,6 +172,7 @@ export class AppComponent implements OnInit {
       this.courses = [
         'MBA',
         'MCA',
+        'MSc Agriculture',
         'LLB',
         'M.Tech',
         'Other'
