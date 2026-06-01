@@ -5,7 +5,7 @@
 <div *ngIf="!isAdminPage && !isCounselorRegisterPage && !isCounselorDashboardPage">
 
   <div class="top-banner">
-    🎓 Admission Open 2026 — Free counselling available for limited seats
+    🎓 Bihar Students ke liye Free Career & Admission Guidance
   </div>
 
   <nav class="navbar">
@@ -50,7 +50,7 @@
       </div>
 
       <section class="why-slider-section">
-        <h2>Why Choose CollegeRoute?</h2>
+        <h2>Why Students Trust CollegeRoute?</h2>
 
         <div class="slider-box">
           <div class="slide">🎓 Smart AI-based college guidance for every student</div>
@@ -90,17 +90,17 @@
         </div>
 
         <div class="form-group">
-          <label>Student Email ID</label>
+          <label>Email ID</label>
           <input type="email" placeholder="example@gmail.com" [(ngModel)]="student.email" name="email">
         </div>
 
         <div class="form-group">
-          <label>+91 Contact Number</label>
+          <label>Contact Number</label>
           <input type="text" placeholder="10 digit mobile number" [(ngModel)]="student.mobile" name="mobile">
         </div>
 
         <div class="form-group">
-          <label>Select State</label>
+          <label>State</label>
           <select [(ngModel)]="student.state" name="state" (change)="onStateChange()">
             <option value="">Select State</option>
             <option *ngFor="let state of states" [value]="state">{{ state }}</option>
@@ -118,7 +118,7 @@
 </div>
 
   <div class="form-group" *ngIf="student.state === 'Other' && student.customState">
-  <label>Enter District / City</label>
+  <label>District / City</label>
   <input
     type="text"
     [(ngModel)]="student.city"
@@ -128,9 +128,9 @@
 </div>
 
         <div class="form-group" *ngIf="student.state !== 'Other'">
-  <label>Select City / District</label>
+  <label>Enter City / District</label>
   <select [(ngModel)]="student.city" name="city">
-    <option value="">Select District</option>
+    <option value="">Enter District</option>
     <option *ngFor="let city of cities" [value]="city">
       {{ city }}
     </option>
@@ -140,9 +140,9 @@
 
 
         <div class="form-group">
-          <label>Level of Study</label>
+          <label>Course</label>
           <select [(ngModel)]="student.level" name="level" (change)="onLevelChange()">
-            <option value="">Select Level</option>
+            <option value="">Select Course</option>
             <option value="Diploma">Diploma</option>
             <option value="UG">UG</option>
             <option value="PG">PG</option>
@@ -150,15 +150,15 @@
         </div>
 
         <div class="form-group" *ngIf="student.level">
-          <label>Select Course</label>
+          <label>Select Department</label>
           <select [(ngModel)]="student.course" name="course">
-            <option value="">Select Course</option>
+            <option value="">Select Department</option>
             <option *ngFor="let course of courses" [value]="course">{{ course }}</option>
           </select>
         </div>
 
         <div class="form-group" *ngIf="student.course === 'Other'">
-  <label>Enter Course Name</label>
+  <label>Enter Department</label>
   <input
     type="text"
     [(ngModel)]="student.customCourse"
@@ -173,7 +173,7 @@
         </label>
 
         <button type="button" class="submit-btn" (click)="submitForm(student)">
-          Get Free Counseling
+          Get Free Call
         </button>
       </div>
     </div>
@@ -181,10 +181,10 @@
   </section>
 
   <section class="stats-section">
-    <div class="stat-box"><h2>5000+</h2><p>Students Guided</p></div>
+    <div class="stat-box"><h2>200+</h2><p>Students Guided</p></div>
     <div class="stat-box"><h2>100+</h2><p>College Partners</p></div>
     <div class="stat-box"><h2>24/7</h2><p>Student Support</p></div>
-    <div class="stat-box"><h2>95%</h2><p>Admission Success</p></div>
+    <div class="stat-box"><h2>80%</h2><p>Admission Success</p></div>
   </section>
 
   <section class="testimonial-section" id="reviews">
@@ -193,15 +193,15 @@
     <div class="testimonial-slider">
       <div class="testimonial-track">
 
-        <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“CollegeRoute helped me choose the best college without confusion.”<h4>— Rahul Kumar</h4></div>
+        <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>"Counsellor ne mujhe course aur college selection clearly samjhaya."<h4>— Rahul Kumar</h4></div>
         <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“Very supportive counselors and smooth admission process.”<h4>— Priya Sharma</h4></div>
-        <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“Best guidance platform for students after 12th.”<h4>— Aman Raj</h4></div>
+        <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>"Budget ke according options mil gaye, process easy laga."<h4>— Aman Raj</h4></div>
         <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“Fast response and excellent counselling support.”<h4>— Sneha Kumari</h4></div>
 
         <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“Counselling process was very easy and smooth.”<h4>— Aditya Verma</h4></div>
         <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“Got admission guidance exactly according to my budget.”<h4>— Neha Singh</h4></div>
         <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“Very responsive support team and excellent guidance.”<h4>— Vivek Anand</h4></div>
-        <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>“CollegeRoute saved a lot of my time during admissions.”<h4>— Muskan Raj</h4></div>
+        <div class="testimonial-card">⭐⭐⭐⭐⭐<br><br>"12th ke baad confusion clear hua."<h4>— Muskan Raj</h4></div>
 
       </div>
     </div>
